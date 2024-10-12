@@ -210,3 +210,9 @@ sudo ufw status
 - Run your Python app to test the weather data retrieval.
 
 ---
+
+
+sudo ufw allow 5000/tcp
+gunicorn --bind 0.0.0.0:5000 app:app
+curl "http://your-server-ip:5000/weather?city=London"
+
