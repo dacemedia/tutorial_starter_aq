@@ -216,3 +216,102 @@ sudo ufw allow 5000/tcp
 gunicorn --bind 0.0.0.0:5000 app:app
 curl "http://your-server-ip:5000/weather?city=London"
 
+
+Here are the commands in a list to set up **Gunicorn** and **Nginx**:
+
+### Step 1: Install Gunicorn and Nginx
+```bash
+pip install gunicorn
+sudo apt update
+sudo apt install nginx
+```
+
+### Step 2: Set Up Gunicorn
+
+1. **Create a Gunicorn service file**:
+   ```bash
+   sudo nano /etc/systemd/system/gunicorn.service
+   ```
+
+2. **Add this content to the service file**:
+   *(Replace paths as necessary)*
+   ```ini
+   [Unit]
+   Description=Gunicorn instance to serve Flask app
+   After=network.target
+
+   [Service]
+   User=your_user_name
+   Group=www-data
+   WorkingDirectory=/path/to/your/project
+   ExecStart=/path/to/your/virtualenv/bin/gunicorn --workers 3 --bind 127.0.0.1:5000 weather_app:app
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+3. **Start and enable Gunicorn service**:
+   ```bash
+   sudo systemctl start gunicorn
+   sudo systemctl enable gunicorn
+   ```
+
+4. **Check Gunicorn status**:
+   ```bash
+   sudo systemctl status gunicorn
+   ```
+
+### Step 3: Configure Nginx
+
+1. **Create an Nginx configuration file**:
+   ```bash
+   sudo nano /etc/nginx/sites-available/your_flask_app
+   ```
+
+2. **Add the following content**:
+   ```nginx
+   server {
+       listen 80;
+       server_name your_domain_or_IP;
+
+       location / {
+           proxy_pass http://127.0.0.1:5000;
+           proxy_set_header Host $host;
+           proxy_set_header X-Real-IP $remote_addr;
+           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+           proxy_set_header X-Forwarded-Proto $scheme;
+       }
+
+       location /static {
+           alias /path/to/your/project/static;
+       }
+   }
+   ```
+
+3. **Enable the Nginx site**:
+   ```bash
+   sudo ln -s /etc/nginx/sites-available/your_flask_app /etc/nginx/sites-enabled
+   ```
+
+4. **Test the Nginx configuration**:
+   ```bash
+   sudo nginx -t
+   ```
+
+5. **Restart Nginx**:
+   ```bash
+   sudo systemctl restart nginx
+   ```
+
+### Step 4: Open Port 80
+```bash
+sudo ufw allow 'Nginx Full'
+```
+
+### Step 5: Check the status of the firewall
+```bash
+sudo ufw status
+```
+
+Let me know if you need further help!
+
