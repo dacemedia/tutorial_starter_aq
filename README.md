@@ -217,8 +217,6 @@ gunicorn --bind 0.0.0.0:5000 app:app
 curl "http://your-server-ip:5000/weather?city=London"
 
 
-Here are the commands in a list to set up **Gunicorn** and **Nginx**:
-
 ### Step 1: Install Gunicorn and Nginx
 ```bash
 pip install gunicorn
@@ -312,6 +310,4 @@ sudo ufw allow 'Nginx Full'
 ```bash
 sudo ufw status
 ```
-
-Let me know if you need further help!
 
